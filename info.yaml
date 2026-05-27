@@ -1,11 +1,15 @@
 # Tiny Tapeout project information
 project:
-  title:        ""      # Project title
-  author:       ""      # Your name
+  title:        "Fast Authentication Accelerator"      # Project title
+  author:       "Nagaraj"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  ""      # One line description of what your project does
+  description:  "A hardware IP block that performs low-latency ECDSA (Elliptic Curve Digital
+    Signature Algorithm) verification for V2X (Vehicle-to-Everything) communication.
+    Authenticates digital signatures in under 1 ms, meeting IEEE 1609.2 automotive
+    security requirements. Implements Modular Inverse, Scalar Multiplier, Point
+    Multiply, and Comparator blocks in RTL."      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     50000000     # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 340x160 uM.
   tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
@@ -23,24 +27,24 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
-  ui[3]: ""
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+    - "data_in[0] - Input byte bit 0 / start (when mode=control)"
+    - "data_in[1] - Input byte bit 1 / soft_rst (when mode=control)"
+    - "data_in[2] - Input byte bit 2 / mode[0]"
+    - "data_in[3] - Input byte bit 3 / mode[1]"
+    - "data_in[4] - Input byte bit 4"
+    - "data_in[5] - Input byte bit 5"
+    - "data_in[6] - Input byte bit 6"
+    - "data_in[7] - Input byte bit 7"
 
   # Outputs
-  uo[0]: ""
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+    - "auth_valid  - HIGH = signature verified successfully"
+    - "auth_reject - HIGH = signature verification failed"
+    - "busy        - HIGH = core is processing"
+    - "ecc_done    - HIGH = ECC step complete (single cycle pulse)"
+    - "key_loaded  - HIGH = public key has been loaded"
+    - "packet_ready - HIGH = full packet received"
+    - "out[6]      - Reserved"
+    - "out[7]      - Reserved"
 
   # Bidirectional pins
   uio[0]: ""
@@ -51,6 +55,10 @@ pinout:
   uio[5]: ""
   uio[6]: ""
   uio[7]: ""
+
+  uses_clock:        true
+  uses_reset:        true
+  uses_custom_reset: false
 
 # Do not change!
 yaml_version: 6
