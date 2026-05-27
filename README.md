@@ -40,3 +40,61 @@ The GitHub action will automatically build the ASIC files using [LibreLane](http
   - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
   - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
   - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+ 
+  - # Fast Authentication Accelerator
+### Tiny Tapeout — VLSI Training Project
+
+> **Low-Latency Digital Signature Verification for V2X Communication**
+> ECDSA hardware accelerator — verifies automotive V2X messages in under 1 ms.
+
+## Overview
+
+Every V2X message must be digitally verified before acting on it.
+At highway speeds this must happen in **< 1 ms** — impossible in software.
+This accelerator offloads ECDSA signature verification into dedicated hardware.
+
+## Pin Description
+
+| Pin | Name | Description |
+|---|---|---|
+| `ui_in[7:0]` | `data_in` | Input bytes (packet / key stream) |
+| `ui_in[0]` | `start` | Pulse HIGH to begin operation |
+| `ui_in[1]` | `soft_rst` | Soft reset |
+| `ui_in[3:2]` | `mode` | `00`=verify, `01`=load_key |
+| `uo_out[0]` | `auth_valid` | Signature accepted |
+| `uo_out[1]` | `auth_reject` | Signature rejected |
+| `uo_out[2]` | `busy` | Core is processing |
+| `uo_out[3]` | `ecc_done` | ECC step complete pulse |
+| `uo_out[4]` | `key_loaded` | Public key is loaded |
+| `uo_out[5]` | `packet_ready` | Full packet received |
+| `uio_*` | — | Unused (tied off) |
+
+## Architecture
+
+| Module | File | Description |
+|---|---|---|
+| Top-level | `src/tt_um_fast_auth.v` | TT wrapper, I/O |
+| Auth Coprocessor | `src/auth_coprocessor.v` | FSM, protocol parsing |
+| Key Manager | `src/key_manager.v` | Key cache |
+| Modular Inverse | `src/mod_inverse.v` | s⁻¹ mod n |
+| ECC Blocks | `src/ecc_blocks.v` | Scalar mult, Point mult, Comparator |
+
+## Simulate
+
+```bash
+pip install cocotb
+sudo apt install iverilog
+cd test/
+make
+```
+
+## Design Flow
+
+1. RTL Coding → 2. Simulation → 3. Synthesis (Yosys) → 4. STA (OpenSTA) → 5. GDS
+
+## Standards
+
+IEEE 1609.2 · FIPS 186-4 · NIST P-256 · AEC-Q100
+
+## License
+Apache 2.0
