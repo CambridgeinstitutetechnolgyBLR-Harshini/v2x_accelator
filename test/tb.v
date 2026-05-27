@@ -23,7 +23,7 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
-  tt_um_fast_auth(
+  tt_um_fast_auth uut (
 `ifdef GL_TEST
     .VPWR (VPWR),
     .VGND (VGND),
